@@ -17,16 +17,27 @@ router.get("/", async (req, res, next) => {
 router.post("/", async (req, res, next) => {
     try {
         const carData = req.body
-        const [vin] = await db("car-dealer").insert(carData)
-        const newCar = await db("car-dealer").where( { vin })
+        const [id] = await db("car-dealer").insert(carData)
+        const newCar = await db("car-dealer").where("id", id).first()
         res.status(201).json(newCar)
-        console.log(newCar)
     }
     catch (err) {
         next(err)
     }
 
 
+})
+
+router.delete("/:id", async (req, res, next) => {
+    const { id } = req.params
+
+    try {
+        await db("car-dealer").where("id", id).del()
+        res.status(204).end()
+    }
+    catch (err) {
+        next(err)
+    }
 })
 
 module.exports = router
